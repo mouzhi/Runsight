@@ -1,35 +1,19 @@
-# RunSight - 智能眼镜运动数据显示应用
+# Runsight
 
-## 项目简介
+This repository contains the Runsight project, which includes the application source code and related files.
 
-RunSight 是一款专为 Rokid Glasses 智能眼镜开发的运动数据显示应用。通过蓝牙连接佳明手表，实时显示跑步时的关键运动数据，包括心率、配速、运动时间和累计距离。
-请使用开发线连接眼镜安装
+## Project Structure
 
-## 核心特性
+- `app/`: Contains the main application source code.
+- `FitSDK/`: Includes Garmin FIT SDK files.
+- `产品规划文档.md`: Product planning document.
 
-### ✅ 已实现功能
+## Build Instructions
 
-- **🔍 蓝牙设备扫描**: 自动扫描并识别佳明手表设备
-- **📱 设备连接管理**: 稳定的蓝牙GATT连接，支持断线重连
-- **📊 FIT数据解析**: 完整的佳明FIT协议数据解析支持
-- **💚 绿色单色UI**: 专为Rokid Glasses 480×640绿色显示优化
-- **⚡ 电量优化**: 1Hz刷新频率，最小化电量消耗
-- **🎮 触控板交互**: 支持滑动选择、单击确认、双击返回
+1. Ensure you have Android Studio installed.
+2. Open the project in Android Studio.
+3. Build and run the application on a connected device or emulator.
 
-### 📊 实时数据显示
+## License
 
-- **❤️ 心率监测**: 实时BPM显示，支持心率区间颜色提示
-- **⏱️ 配速追踪**: 分钟/公里格式的实时配速
-- **🕐 运动时间**: 精确的运动时长计时
-- **📏 累计距离**: 公里单位的距离统计
-
-### 🎨 设计规范
-
-- **屏幕适配**: 480×640分辨率，最佳显示区域480×400
-- **颜色主题**: 绿色#40FF5E为主色调，纯黑背景
-- **无渐变设计**: 符合单色显示要求
-- **简洁界面**: 专为跑步场景优化的信息布局
-
----
-
-**RunSight** - 让跑步数据触手可及 🏃‍♂️💚# Runsight
+This project is licensed under the MIT License.
