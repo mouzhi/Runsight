@@ -1,19 +1,16 @@
 # Runsight
 
-This repository contains the Runsight project, which includes the application source code and related files.
+This repository contains the Runsight project, an Android application for fitness tracking and data analysis.
 
-## Project Structure
+## Features
+- Real-time heart rate monitoring
+- Running speed and cadence tracking
+- Data synchronization with external devices
 
-- `app/`: Contains the main application source code.
-- `FitSDK/`: Includes Garmin FIT SDK files.
-- `产品规划文档.md`: Product planning document.
-
-## Build Instructions
-
-1. Ensure you have Android Studio installed.
+## Setup
+1. Clone the repository.
 2. Open the project in Android Studio.
-3. Build and run the application on a connected device or emulator.
+3. Build and run the application on a compatible device.
 
 ## License
-
 This project is licensed under the MIT License.
