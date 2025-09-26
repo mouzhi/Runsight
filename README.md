@@ -2,6 +2,15 @@
 
 一个专为佳明手表设计的Android应用，通过蓝牙标准服务实时获取和显示运动数据。
 
+## 应用截图
+
+<div align="center">
+  <img src="screenshot.png" alt="应用主界面" width="300"/>
+  <img src="screenshot_fixed.png" alt="数据显示界面" width="300"/>
+</div>
+
+*左图：应用主界面，显示设备连接状态；右图：数据显示界面，实时显示运动数据*
+
 ## 项目简介
 
 Runsight是一个轻量级的Android应用，专门用于连接佳明（Garmin）智能手表，通过蓝牙低功耗（BLE）技术获取实时运动数据。应用采用简洁的界面设计，专注于核心功能的实现。
