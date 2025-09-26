@@ -56,8 +56,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.scenecore)
     
-    // FIT SDK for Garmin data parsing
-    implementation(files("libs/fit.jar"))
+
     
     // Rokid CXR-S SDK for XR functionality
     implementation("com.rokid.cxr:cxr-service-bridge:1.0-20250519.061355-45")

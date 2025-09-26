@@ -1,8 +1,8 @@
 package com.mouzhi.runsight.utils
 
 import android.util.Log
-import com.mouzhi.runsight.ui.screens.DebugLogEntry
-import com.mouzhi.runsight.ui.screens.DebugLogLevel
+import com.mouzhi.runsight.data.models.DebugLogEntry
+import com.mouzhi.runsight.data.models.DebugLogLevel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

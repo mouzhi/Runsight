@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mouzhi.runsight.data.models.*
 import com.mouzhi.runsight.data.repository.SportDataRepository
-import com.mouzhi.runsight.ui.screens.DebugLogEntry
+import com.mouzhi.runsight.data.models.DebugLogEntry
 import com.mouzhi.runsight.utils.BrightnessManager
 import com.mouzhi.runsight.utils.DebugLogger
 import kotlinx.coroutines.flow.*
@@ -32,10 +32,6 @@ class RunSightViewModel(
     // 选中的设备索引（用于触控板导航）
     private val _selectedDeviceIndex = MutableStateFlow(-1)
     val selectedDeviceIndex: StateFlow<Int> = _selectedDeviceIndex.asStateFlow()
-    
-    // 当前屏幕
-    private val _currentScreen = MutableStateFlow(Screen.SCAN)
-    val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
     
     // 调试日志
     val debugLogs: StateFlow<List<DebugLogEntry>> = DebugLogger.logs
@@ -76,22 +72,20 @@ class RunSightViewModel(
                     isScanning = appState.isScanning
                 )
                 
-                // 根据连接状态切换屏幕
+                // 根据连接状态自动切换界面逻辑
                 when (appState.connectionState) {
                     ConnectionState.CONNECTED -> {
-                        if (_currentScreen.value != Screen.DATA) {
-                            DebugLogger.i("ViewModel", "设备已连接，切换到数据界面")
-                            _currentScreen.value = Screen.DATA
-                        }
+                        // 连接成功时的处理
+                        DebugLogger.i("ViewModel", "设备连接成功")
                     }
                     ConnectionState.DISCONNECTED, ConnectionState.ERROR -> {
-                        if (_currentScreen.value != Screen.SCAN) {
-                            DebugLogger.i("ViewModel", "设备已断开或出错，切换到扫描界面")
-                            _currentScreen.value = Screen.SCAN
-                            _selectedDeviceIndex.value = -1
+                        // 断开连接时的处理
+                        if (appState.connectionState == ConnectionState.ERROR) {
+                            DebugLogger.i("ViewModel", "设备已断开或出错")
                         }
+                        _selectedDeviceIndex.value = -1
                     }
-                    else -> { /* 保持当前屏幕 */ }
+                    else -> { /* 保持当前状态 */ }
                 }
             }
         }
@@ -172,35 +166,6 @@ class RunSightViewModel(
         DebugLogger.i("ViewModel", "调试日志已清除")
     }
     
-    /**
-     * 切换屏幕
-     */
-    fun switchToScreen(screen: Screen) {
-        _currentScreen.value = screen
-        DebugLogger.i("ViewModel", "切换到屏幕: $screen")
-    }
-    
-    /**
-     * 切换到调试界面
-     */
-    fun showDebugScreen() {
-        switchToScreen(Screen.DEBUG)
-    }
-    
-    /**
-     * 显示设置指南
-     */
-    fun showSetupGuide() {
-        switchToScreen(Screen.SETUP_GUIDE)
-    }
-    
-    /**
-     * 显示服务状态界面
-     */
-    fun showServiceStatus() {
-        switchToScreen(Screen.SERVICE_STATUS)
-    }
-    
     // === 用户操作方法 ===
     
     /**
@@ -278,7 +243,6 @@ class RunSightViewModel(
     fun disconnect() {
         viewModelScope.launch {
             repository.disconnect()
-            _currentScreen.value = Screen.SCAN
         }
     }
     
@@ -286,7 +250,7 @@ class RunSightViewModel(
      * 清除错误信息
      */
     fun clearError() {
-        repository.clearError()
+        _uiState.value = _uiState.value.copy(errorMessage = null)
     }
     
     /**
@@ -294,160 +258,6 @@ class RunSightViewModel(
      */
     fun resetSportData() {
         repository.resetSportData()
-    }
-    
-    // === 触控板交互方法 ===
-    
-    /**
-     * 触控板左滑（上一项）
-     */
-    fun onTouchpadSwipeLeft() {
-        when (_currentScreen.value) {
-            Screen.SCAN -> {
-                val devices = _uiState.value.availableDevices
-                if (devices.isNotEmpty()) {
-                    val currentIndex = _selectedDeviceIndex.value
-                    val newIndex = if (currentIndex <= 0) devices.size - 1 else currentIndex - 1
-                    _selectedDeviceIndex.value = newIndex
-                }
-            }
-            Screen.DATA -> {
-                // 左滑降低亮度
-                brightnessManager.decreaseBrightness()
-            }
-            Screen.SIMPLE_DATA -> {
-                // 左滑降低亮度
-                brightnessManager.decreaseBrightness()
-            }
-            Screen.DEBUG -> {
-                // 在调试界面可以用于滚动日志等
-            }
-            Screen.SETUP_GUIDE -> {
-                // 在设置指南界面可以用于滚动页面等
-            }
-            Screen.SERVICE_STATUS -> {
-                // 在服务状态界面可以用于滚动页面等
-            }
-        }
-    }
-    
-    /**
-     * 触控板右滑（下一项）
-     */
-    fun onTouchpadSwipeRight() {
-        when (_currentScreen.value) {
-            Screen.SCAN -> {
-                val devices = _uiState.value.availableDevices
-                if (devices.isNotEmpty()) {
-                    val currentIndex = _selectedDeviceIndex.value
-                    val newIndex = if (currentIndex >= devices.size - 1) 0 else currentIndex + 1
-                    _selectedDeviceIndex.value = newIndex
-                }
-            }
-            Screen.DATA -> {
-                // 右滑增加亮度
-                brightnessManager.increaseBrightness()
-            }
-            Screen.SIMPLE_DATA -> {
-                // 右滑增加亮度
-                brightnessManager.increaseBrightness()
-            }
-            Screen.DEBUG -> {
-                // 在调试界面可以用于滚动日志等
-            }
-            Screen.SETUP_GUIDE -> {
-                // 在设置指南界面可以用于滚动页面等
-            }
-            Screen.SERVICE_STATUS -> {
-                // 在服务状态界面可以用于滚动页面等
-            }
-        }
-    }
-    
-    /**
-     * 触控板单击（确认）
-     */
-    fun onTouchpadClick() {
-        when (_currentScreen.value) {
-            Screen.SCAN -> {
-                val devices = _uiState.value.availableDevices
-                val selectedIndex = _selectedDeviceIndex.value
-                if (selectedIndex >= 0 && selectedIndex < devices.size) {
-                    connectDevice(devices[selectedIndex])
-                } else if (devices.isNotEmpty()) {
-                    // 如果没有选中设备，默认选择第一个佳明设备
-                    val garminDevice = devices.firstOrNull { it.isGarminDevice }
-                        ?: devices.first()
-                    connectDevice(garminDevice)
-                }
-            }
-            Screen.DATA -> {
-                // 点击确认按钮切换到简洁界面
-                switchToScreen(Screen.SIMPLE_DATA)
-            }
-            Screen.SIMPLE_DATA -> {
-                // 点击确认按钮切换回完整数据界面
-                switchToScreen(Screen.DATA)
-            }
-            Screen.DEBUG -> {
-                // 在调试界面可以用于复制调试信息等
-            }
-            Screen.SETUP_GUIDE -> {
-                // 在设置指南界面可以用于确认操作等
-            }
-            Screen.SERVICE_STATUS -> {
-                // 在服务状态界面可以用于确认操作等
-            }
-        }
-    }
-    
-    /**
-     * 触控板双击（返回）
-     */
-    fun onTouchpadDoubleClick() {
-        when (_currentScreen.value) {
-            Screen.SCAN -> {
-                // 在扫描界面双击可以退出应用或返回主界面
-            }
-            Screen.DATA -> {
-                // 从数据界面返回扫描界面
-                disconnect()
-            }
-            Screen.SIMPLE_DATA -> {
-                // 从简洁界面返回扫描界面
-                disconnect()
-            }
-            Screen.DEBUG -> {
-                // 从调试界面返回到上一个界面
-                if (_uiState.value.connectionState == ConnectionState.CONNECTED) {
-                    switchToScreen(Screen.DATA)
-                } else {
-                    switchToScreen(Screen.SCAN)
-                }
-            }
-            Screen.SETUP_GUIDE -> {
-                // 从设置指南返回到扫描界面
-                switchToScreen(Screen.SCAN)
-            }
-            Screen.SERVICE_STATUS -> {
-                // 从服务状态返回到数据界面
-                switchToScreen(Screen.DATA)
-            }
-        }
-    }
-    
-    /**
-     * 拍照按键单击
-     */
-    fun onCameraButtonClick() {
-        // 预留功能：可以用于截图或标记重要时刻
-    }
-    
-    /**
-     * 拍照按键长按
-     */
-    fun onCameraButtonLongPress() {
-        // 预留功能：可以用于开始/停止记录等
     }
     
     // === 生命周期方法 ===
@@ -494,16 +304,4 @@ data class RunSightUiState(
      */
     val hasError: Boolean
         get() = errorMessage != null
-}
-
-/**
- * 屏幕枚举
- */
-enum class Screen {
-    SCAN,           // 扫描界面
-    DATA,           // 数据显示界面
-    SIMPLE_DATA,    // 简洁数据显示界面
-    DEBUG,          // 调试界面
-    SETUP_GUIDE,    // 设置指南界面
-    SERVICE_STATUS  // 服务状态界面
 }

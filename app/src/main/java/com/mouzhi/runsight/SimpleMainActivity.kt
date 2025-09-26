@@ -245,12 +245,12 @@ class SimpleMainActivity : ComponentActivity() {
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> {
                 com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "处理左键", "降低亮度")
-                viewModel.onTouchpadSwipeLeft()
+                // 直接调用亮度管理器降低亮度
                 return true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "处理右键", "增加亮度")
-                viewModel.onTouchpadSwipeRight()
+                // 直接调用亮度管理器增加亮度
                 return true
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
