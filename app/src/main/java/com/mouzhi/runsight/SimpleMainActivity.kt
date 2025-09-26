@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.mouzhi.runsight.utils.BrightnessManager
 import com.mouzhi.runsight.ui.viewmodel.RunSightViewModel
 import kotlinx.coroutines.launch
 
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 class SimpleMainActivity : ComponentActivity() {
 
     private val viewModel: RunSightViewModel by viewModels()
+    private val brightnessManager: BrightnessManager by lazy { BrightnessManager(this) }
     
     private lateinit var titleText: TextView
     private lateinit var statusText: TextView
@@ -245,12 +247,12 @@ class SimpleMainActivity : ComponentActivity() {
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> {
                 com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "处理左键", "降低亮度")
-                // 直接调用亮度管理器降低亮度
+                brightnessManager.decreaseBrightness()
                 return true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "处理右键", "增加亮度")
-                // 直接调用亮度管理器增加亮度
+                brightnessManager.increaseBrightness()
                 return true
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
