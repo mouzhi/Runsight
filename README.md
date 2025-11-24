@@ -120,9 +120,9 @@ adb install app/build/outputs/apk/release/app-release.apk
 
 你也可以直接从GitHub Releases页面下载最新版本的APK文件：
 
-📱 **[下载最新版本 v1.2.0](https://github.com/mouzhi/Runsight/releases/latest)**
+📱 **[下载最新版本 v1.3.0](https://github.com/mouzhi/Runsight/releases/latest)**
 
-- `Runsight-v1.2.0-signed.apk` - 正式发布版本（推荐）
+- `Runsight-v1.3.0-signed.apk` - 正式发布版本（推荐）
 
 ## 蓝牙服务说明
 
@@ -154,7 +154,13 @@ adb install app/build/outputs/apk/release/app-release.apk
 
 ## 版本历史
 
-### v1.2.0 (最新版本)
+### v1.3.0 (最新版本)
+- 新增：第三个竞赛仪表页，安全显示区域适配（480×400）
+- 新增：比赛起点重置提示与组合操作（左→右或右→左）
+- 优化：日期与电量移至不安全上下边区域，避免遮挡核心信息
+- 更新：预计完赛显示为“预计用时”，算法基于剩余距离×实时配速 + 已用时
+
+### v1.2.0
 - 新增：应用前台运行时保持屏幕常亮
 - 新增：返回桌面后自动恢复系统5秒息屏策略
 - 优化：在具备系统写权限时进入前台提高系统息屏超时，退出时自动恢复原值
