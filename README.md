@@ -120,9 +120,9 @@ adb install app/build/outputs/apk/release/app-release.apk
 
 你也可以直接从GitHub Releases页面下载最新版本的APK文件：
 
-📱 **[下载最新版本 v1.1.1](https://github.com/mouzhi/Runsight/releases/latest)**
+📱 **[下载最新版本 v1.2.0](https://github.com/mouzhi/Runsight/releases/latest)**
 
-- `Runsight-v1.1.1-signed.apk` - 正式发布版本（推荐）
+- `Runsight-v1.2.0-signed.apk` - 正式发布版本（推荐）
 
 ## 蓝牙服务说明
 
@@ -154,7 +154,12 @@ adb install app/build/outputs/apk/release/app-release.apk
 
 ## 版本历史
 
-### v1.1.1 (最新版本)
+### v1.2.0 (最新版本)
+- 新增：应用前台运行时保持屏幕常亮
+- 新增：返回桌面后自动恢复系统5秒息屏策略
+- 优化：在具备系统写权限时进入前台提高系统息屏超时，退出时自动恢复原值
+
+### v1.1.1
 - 修复左右按键亮度调节功能失效问题
 - 添加APK签名配置，支持正式发布
 - 更新版本号和构建配置

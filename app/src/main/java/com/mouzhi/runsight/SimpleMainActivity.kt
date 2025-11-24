@@ -32,6 +32,8 @@ class SimpleMainActivity : ComponentActivity() {
     
     // 页面状态：true为数据页面，false为主页面
     private var isDataPageMode = false
+    private var originalScreenOffTimeout: Int? = null
+    private var appliedSystemKeepOn: Boolean = false
     
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -148,6 +150,10 @@ class SimpleMainActivity : ComponentActivity() {
         
         // 初始显示主页面
         updateUIForCurrentPage()
+
+        // 应用窗口常亮标志，确保前台运行时不息屏
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "启用屏幕常亮")
     }
     
     private fun observeViewModel() {
@@ -238,7 +244,48 @@ class SimpleMainActivity : ComponentActivity() {
     
     override fun onResume() {
         super.onResume()
-        com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "Activity恢复")
+        // 防止部分设备在恢复时清除窗口标志，重新设置常亮
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "Activity恢复，保持屏幕常亮")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        try {
+            if (android.provider.Settings.System.canWrite(this)) {
+                val current = android.provider.Settings.System.getInt(contentResolver, android.provider.Settings.System.SCREEN_OFF_TIMEOUT, 5000)
+                originalScreenOffTimeout = current
+                android.provider.Settings.System.putInt(contentResolver, android.provider.Settings.System.SCREEN_OFF_TIMEOUT, 86400000)
+                appliedSystemKeepOn = true
+                com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "设置系统息屏超时为常亮", "原值: $current")
+            } else {
+                com.mouzhi.runsight.utils.DebugLogger.w("SimpleMainActivity", "缺少修改系统设置权限，使用窗口常亮")
+            }
+        } catch (e: Exception) {
+            com.mouzhi.runsight.utils.DebugLogger.e("SimpleMainActivity", "设置系统息屏超时失败", e.message ?: "")
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 进入后台后清理常亮标志，避免不必要的耗电
+        window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "Activity暂停，清理屏幕常亮标志")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            if (appliedSystemKeepOn && android.provider.Settings.System.canWrite(this)) {
+                val restore = originalScreenOffTimeout ?: 5000
+                android.provider.Settings.System.putInt(contentResolver, android.provider.Settings.System.SCREEN_OFF_TIMEOUT, restore)
+                com.mouzhi.runsight.utils.DebugLogger.i("SimpleMainActivity", "恢复系统息屏超时", "恢复为: $restore")
+            }
+        } catch (e: Exception) {
+            com.mouzhi.runsight.utils.DebugLogger.e("SimpleMainActivity", "恢复系统息屏超时失败", e.message ?: "")
+        } finally {
+            appliedSystemKeepOn = false
+        }
     }
     
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
